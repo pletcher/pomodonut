@@ -1,3 +1,43 @@
-h1 {
-  text-decoration: underline;
+@import url(https://fonts.googleapis.com/css?family=Lato:400,700,900);
+
+body {
+  font-family: Lato, sans-serif;
+}
+
+.bg-green {
+  background-color: #51e59e;
+}
+
+.bg-red {
+  background-color: #e55451;
+}
+
+.circle {
+  border-radius: 100%;
+}
+
+.flex {
+  display: flex;
+}
+
+.flex-center {
+  align-items: center;
+  justify-content: center;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.h1 {
+  font-size: 4rem;
+}
+
+.mx-auto {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.white {
+  color: #f9f9f9;
 }
