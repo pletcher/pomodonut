@@ -34,31 +34,26 @@
     (reset! timeout t)
     c))
 
+(defn clear-timeout []
+  (js/clearTimeout @timeout)
+  (close! @interval)
+  (reset! interval nil)
+  (reset! timeout nil))
+
 (defn start-timer
   [c duration s]
   (let [i (go-loop [t (inc s)]
-            (do
-              (om/transact! c `[(timer/update-elapsed-time {:t ~t})])
-              (when (and
-                      (not (nil? @interval))
-                      (< t duration))
-                (do
-                  (<! (wait 1000))
-                  (recur (inc t))))
-              (when (>= t duration)
-                (when-not (nil? @interval)
-                  (close! @interval)
-                  (reset! interval nil)))))]
+            (om/transact! c `[(timer/update-elapsed-time {:t ~t})])
+            (if (< t duration)
+              (do
+                (<! (wait 1000))
+                (recur (inc t)))
+              (clear-timeout)))]
     (reset! interval i)))
 
-(defn stop-timer
-  [c]
-  (do
-    (js/clearTimeout @timeout)
-    (close! @interval)
-    (reset! interval nil)
-    (reset! timeout nil)
-    (om/transact! c `[(timer/update-elapsed-time {:t ~0})])))
+(defn stop-timer [c]
+  (clear-timeout)
+  (om/transact! c `[(timer/update-elapsed-time {:t ~0})]))
 
 (defui Timer
   static om/IQuery
