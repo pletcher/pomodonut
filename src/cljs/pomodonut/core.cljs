@@ -15,6 +15,8 @@
 (defonce FIVE-MINUTES (* 5 ONE-MINUTE))
 (defonce TWENTY-FIVE-MINUTES (* 25 ONE-MINUTE))
 
+(defonce tick-sound (js/Audio. "wav/watch-tick.wav"))
+
 (defn timer-class [break?]
   (str "bg-" (if break? "green" "red") " circle flex flex-center mx-auto"))
 
@@ -44,6 +46,7 @@
   [c duration s]
   (let [i (go-loop [t (inc s)]
             (om/transact! c `[(timer/update-elapsed-time {:t ~t})])
+            (.play tick-sound)
             (if (< t duration)
               (do
                 (<! (wait 1000))
