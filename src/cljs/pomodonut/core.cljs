@@ -44,14 +44,18 @@
 
 (defn start-timer
   [c duration s]
-  (let [i (go-loop [t (inc s)]
-            (om/transact! c `[(timer/update-elapsed-time {:t ~t})])
+  (let [i (go-loop [t s]
+            (om/transact! c `[(timer/update-elapsed-time ~{:t t})])
             (.play tick-sound)
             (if (< t duration)
               (do
                 (<! (wait 1000))
                 (recur (inc t)))
-              (clear-timeout)))]
+              (do
+                (clear-timeout)
+                (om/transact! c `[(timer/reset ~{:break? true
+                                                 :duration FIVE-MINUTES
+                                                 :elapsed 0})]))))]
     (reset! interval i)))
 
 (defn stop-timer [c]
@@ -64,9 +68,13 @@
     [:break? :duration :elapsed])
   Object
   (componentDidMount [this]
-    (om/transact! this `[(timer/reset {:break? false
-                                       :duration ~TWENTY-FIVE-MINUTES
-                                       :elapsed ~0})]))
+    (om/transact! this `[(timer/reset ~{:break? false
+                                        :duration TWENTY-FIVE-MINUTES
+                                        :elapsed 0})]))
+  (componentDidUpdate [this prev-props _]
+    (let [{:keys [break? duration elapsed]} (om/props this)]
+      (when (and break? (not (:break? prev-props)))
+        (start-timer this duration elapsed))))
   (render [this]
     (let [{:keys [break? duration elapsed]} (om/props this)]
       (dom/div #js {:className (timer-class break?)
