@@ -18,7 +18,7 @@
 (defonce tick-sound (js/Audio. "wav/watch-tick.wav"))
 
 (defn timer-class [break?]
-  (str "bg-" (if break? "green" "red") " circle flex flex-center mx-auto"))
+  (str "bg-" (if break? "green" "red") " circle flex flex-center mx-auto shadow"))
 
 (defn format-time
   "Format time as mm:ss"
@@ -44,7 +44,7 @@
 
 (defn start-timer
   [c duration s]
-  (let [i (go-loop [t s]
+  (let [i (go-loop [t (inc s)]
             (om/transact! c `[(timer/update-elapsed-time ~{:t t})])
             (.play tick-sound)
             (if (< t duration)
@@ -61,6 +61,44 @@
 (defn stop-timer [c]
   (clear-timeout)
   (om/transact! c `[(timer/update-elapsed-time {:t ~0})]))
+
+(defn button-class
+  "Returns the class of a button based on its type.
+  button-type should be in
+  [\"default\", \"disabled\", \"primary\"]"
+  [button-type]
+  (str "btn btn-" button-type " shadow"))
+
+(defn button
+  [props & children]
+  (let [{:keys [button-type on-click]} props]
+    (dom/button #js {:className (button-class button-type)
+                     :onClick on-click}
+      children)))
+
+(defui Task
+  static om/IQuery
+  (query [this]
+    [:done? :title :ts])
+  Object
+  (render [this]
+    (dom/li nil "TASK")))
+
+(def task (om/factory Task {:keyfn :ts}))
+
+(defui TaskList
+  static om/IQuery
+  (query [this]
+    [{:tasks (om/get-query Task)}])
+  Object
+  (render [this]
+    (let [{:keys [tasks]} (om/props this)]
+      (dom/div #js {:className "sm-absolute border mt4 p2 shadow sm-mr3 sm-mt1 sm-right"
+                    :style #js {:borderRadius 2
+                                :minWidth 240}}
+        (apply dom/ul nil (map task tasks))))))
+
+(def task-list (om/factory TaskList))
 
 (defui Timer
   static om/IQuery
@@ -81,8 +119,10 @@
                     :onClick #(if (nil? @interval)
                                 (start-timer this duration elapsed)
                                 (stop-timer this))
-                    :style #js {:height 400
-                                :width 400}}
+                    :style #js {:height "auto"
+                                :maxWidth 300
+                                :minHeight 300
+                                :minWidth 300}}
         (dom/span #js {:className "h1 white"}
           (format-time (- duration elapsed)))))))
 
@@ -91,12 +131,14 @@
 (defui Root
   static om/IQuery
   (query [this]
-    [{:timer (om/get-query Timer)}])
+    [{:tasks (om/get-query TaskList)}
+     {:timer (om/get-query Timer)}])
   Object
   (render [this]
-    (let [{:keys [timer]} (om/props this)]
-      (dom/div #js {:className "full-width"}
-        (timer-component timer)))))
+    (let [{:keys [tasks timer]} (om/props this)]
+      (dom/div #js {:className "sm-flex flex-center full-width py4"}
+        (timer-component timer)
+        (task-list tasks)))))
 
 (defmulti mutate om/dispatch)
 

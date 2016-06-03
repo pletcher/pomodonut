@@ -4,12 +4,65 @@ body {
   font-family: Lato, sans-serif;
 }
 
+.absolute {
+  position: absolute;
+}
+
 .bg-green {
   background-color: #51e59e;
 }
 
 .bg-red {
   background-color: #e55451;
+}
+
+.btn {
+  background-color: transparent;
+  border: 1px solid transparent;
+  border-radius: 2px;
+  color: inherit;
+  cursor: pointer;
+  display: inline-block;
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: 700;
+  height: auto;
+  line-height: 1.125rem;
+  margin: 0;
+  padding: 0.5rem 1rem;
+  text-decoration: none;
+  vertical-align: middle;
+}
+
+.btn:focus {
+  border-color: rgba(0, 0, 0, 0.125);
+  box-shadow: rgba(0, 0, 0, 0.25)
+  outline: none;
+}
+
+.btn:hover {
+  text-decoration: none;
+}
+
+.btn-default {
+  background-color: #d3d3d3;
+  color: #222;
+}
+
+.btn-disabled {
+  background-color: #d3d3d3;
+  color: #858585;
+  cursor: default;
+}
+
+.btn-primary {
+  background-color: #5198e5;
+  border-color: #5198e5;
+  color: white;
+}
+
+.center {
+  text-align: center;
 }
 
 .circle {
@@ -33,11 +86,161 @@ body {
   font-size: 4rem;
 }
 
+.mr1 {
+  margin-right: 0.5rem;
+}
+
+.mr2 {
+  margin-rigth: 1rem;
+}
+
+.mr3 {
+  margin-right: 2rem;
+}
+
+.mr4 {
+  margin-right: 4rem;
+}
+
+.mt1 {
+  margin-top: 0.5rem;
+}
+
+.mt2 {
+  margin-top: 1rem;
+}
+
+.mt3 {
+  margin-top: 2rem;
+}
+
+.mt4 {
+  margin-top: 4rem;
+}
+
 .mx-auto {
   margin-left: auto;
   margin-right: auto;
 }
 
+.p1 {
+  padding: 0.5rem;
+}
+
+.p2 {
+  padding: 1rem;
+}
+
+.p3 {
+  padding: 2rem;
+}
+
+.p4 {
+  padding: 4rem;
+}
+
+.pointer {
+  cursor: pointer;
+}
+
+.px1 {
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+}
+
+.px2 {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+.px3 {
+  padding-left: 2rem;
+  padding-right: 2rem;
+}
+
+.px4 {
+  padding-left: 4rem;
+  padding-right: 4rem;
+}
+
+.py1 {
+  padding-bottom: 0.5rem;
+  padding-top: 0.5rem;
+}
+
+.py2 {
+  padding-bottom: 1rem;
+  padding-top: 1rem;
+}
+
+.py3 {
+  padding-bottom: 2rem;
+  padding-top: 2rem;
+}
+
+.py4 {
+  padding-bottom: 4rem;
+  padding-top: 4rem;
+}
+
+.relative {
+  position: relative;
+}
+
+.shadow {
+  box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.4);
+}
+
 .white {
   color: #f9f9f9;
+}
+
+@media (min-width: 480px) {
+  .sm-absolute {
+    position: absolute;
+  }
+
+  .sm-flex {
+    display: flex;
+  }
+
+  .sm-mr1 {
+    margin-right: 0.5rem;
+  }
+
+  .sm-mr2 {
+    margin-right: 1rem;
+  }
+
+  .sm-mr3 {
+    margin-right: 2rem;
+  }
+
+  .sm-mr4 {
+    margin-right: 4rem;
+  }
+
+  .sm-mt0 {
+    margin-top: 0;
+  }
+
+  .sm-mt1 {
+    margin-top: 0.5rem;
+  }
+
+  .sm-mt2 {
+    margin-top: 1rem;
+  }
+
+  .sm-mt3 {
+    margin-top: 2rem;
+  }
+
+  .sm-mt4 {
+    margin-top: 4rem;
+  }
+
+  .sm-right {
+    right: 0
+  }
 }
