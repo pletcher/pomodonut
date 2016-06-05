@@ -1,7 +1,13 @@
 @import url(https://fonts.googleapis.com/css?family=Lato:400,700,900);
 
 body {
+  color: #02080e;
   font-family: Lato, sans-serif;
+}
+
+ul {
+  margin: 0;
+  padding: 0;
 }
 
 .absolute {
@@ -36,7 +42,7 @@ body {
 
 .btn:focus {
   border-color: rgba(0, 0, 0, 0.125);
-  box-shadow: rgba(0, 0, 0, 0.25)
+  box-shadow: rgba(0, 0, 0, 0.25);
   outline: none;
 }
 
@@ -69,6 +75,42 @@ body {
   border-radius: 100%;
 }
 
+
+/* https://codepen.io/mildrenben/pen/gbddEj?editors=1100 */
+.field {
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0) 96%, #5198e5 4%);
+  /* FIXME: This background position depends on the rendered width */
+  background-position: -400px 0;
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  border: none;
+  border-bottom: solid 1px #5198e5;
+  display: block;
+  font-size: 16px;
+  transition: all 0.3s cubic-bezier(0.64, 0.09, 0.08, 1);
+}
+
+.field::-webkit-input-placeholder {
+  color: #5198e5;
+  -webkit-transition: all 0.3s ease-in-out;
+  transition: all 0.3s ease-in-out;
+}
+
+.field:focus,
+.field:valid {
+  box-shadow: none;
+  outline: none;
+  background-position: 0 0;
+}
+
+.field:focus::-webkit-input-placeholder,
+.field:valid::-webkit-input-placeholder {
+  color: #5198e5;
+  font-weight: 700;
+  transform: translateY(-20px);
+  visibility: visible !important;
+}
+
 .flex {
   display: flex;
 }
@@ -82,8 +124,24 @@ body {
   width: 100%;
 }
 
+.gray {
+  color: #dae9f9;
+}
+
+.group {
+  position: relative;
+}
+
 .h1 {
   font-size: 4rem;
+}
+
+.list {
+  list-style-type: none;
+}
+
+.list-item {
+  list-style-type: none;
 }
 
 .mr1 {
@@ -123,6 +181,10 @@ body {
   margin-right: auto;
 }
 
+.p0 {
+  padding: 0;
+}
+
 .p1 {
   padding: 0.5rem;
 }
@@ -141,6 +203,11 @@ body {
 
 .pointer {
   cursor: pointer;
+}
+
+.px0 {
+  padding-left: 0;
+  padding-right: 0;
 }
 
 .px1 {
