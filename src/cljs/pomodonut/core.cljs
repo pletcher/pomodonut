@@ -7,7 +7,7 @@
 
 (enable-console-print!)
 
-(def app-state (atom {}))
+(defonce app-state (atom {}))
 (defonce interval (atom nil))
 (defonce timeout (atom nil))
 
@@ -17,6 +17,7 @@
 (defonce TWENTY_FIVE_MINUTES (* 25 ONE_MINUTE))
 
 (defonce ENTER_KEY 13)
+(defonce ESCAPE_KEY 27)
 
 (defonce chime-sound (js/Audio. "wav/chime.wav"))
 (defonce tick-sound (js/Audio. "wav/watch-tick.wav"))
@@ -127,10 +128,13 @@
 (defn submit
   [c e]
   (do
-    (om/transact! reconciler `[(tasks/create ~(om/props c)) :tasks])
-    (om/transact! reconciler `[(tasks/update-temp ~nil) :tasks/temp])
+    (om/transact! c `[(tasks/create ~(om/props c)) :tasks])
+    (om/transact! c `[(tasks/update-temp ~nil) :tasks/temp])
     (start-timer TWENTY_FIVE_MINUTES 0)
-    (doto e (.preventDefault) (.stopPropagation))))
+    (.blur (.-target e))
+    (doto e
+      (.preventDefault)
+      (.stopPropagation))))
 
 (defn change-title
   [c e]
@@ -142,6 +146,7 @@
   [c e]
   (condp == (.-keyCode e)
     ENTER_KEY (submit c e)
+    ESCAPE_KEY (.blur (.-target e))
     nil))
 
 (defui TaskForm
@@ -155,6 +160,10 @@
                     :style #js {:width 340}}
         (dom/div #js {:className "full-width group"}
           (dom/input #js {:className "field full-width px0 py1"
+                          ;; FIXME: This is a bit of a hack to
+                          ;; focus the form when abandoning a
+                          ;; task
+                          :id "task-form"
                           :onChange #(change-title this %)
                           :onKeyDown #(key-down this %)
                           :placeholder "What are you going to do?"
@@ -193,6 +202,7 @@
       (dom/div #js {:className (timer-class break?)
                     :onClick #(when-not (nil? @interval)
                                 (stop-timer this)
+                                (.focus (gdom/getElement "task-form"))
                                 (when-not break?
                                   (om/transact! this
                                     `[(tasks/abandon) :tasks])))
