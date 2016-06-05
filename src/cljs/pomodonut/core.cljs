@@ -13,10 +13,12 @@
 
 (defonce ONE_MINUTE 60)
 (defonce FIVE_MINUTES (* 5 ONE_MINUTE))
+(defonce TEN_MINUTES (* 10 ONE_MINUTE))
 (defonce TWENTY_FIVE_MINUTES (* 25 ONE_MINUTE))
 
 (defonce ENTER_KEY 13)
 
+(defonce chime-sound (js/Audio. "wav/chime.wav"))
 (defonce tick-sound (js/Audio. "wav/watch-tick.wav"))
 
 (declare reconciler)
@@ -25,7 +27,8 @@
   (str
     "bg-"
     (if break? "green" "red")
-    " circle flex flex-center mx-auto shadow"))
+    " circle flex flex-center mx-auto shadow "
+    (if-not (nil? @interval) " pointer")))
 
 (defn format-time
   "Format time as mm:ss"
@@ -51,13 +54,13 @@
 
 (defn start-timer
   [duration s]
-  (let [i (go-loop [t (inc s)]
+  (let [i (go-loop [t s]
             (om/transact! reconciler
               `[(timer/update ~{:duration duration
                                 :elapsed t})])
-            (.play tick-sound)
             (if (< t duration)
               (do
+                (.play tick-sound)
                 (<! (wait 1000))
                 (recur (inc t)))
               (do
@@ -68,17 +71,29 @@
                                      :duration TWENTY_FIVE_MINUTES
                                      :elapsed 0})])
                   (do
+                    (.play chime-sound)
                     (om/transact! reconciler
                       `[(tasks/complete) :tasks])
                     (om/transact! reconciler
-                      `[(timer/update ~{:break? true
-                                        :duration FIVE_MINUTES
-                                        :elapsed 0})]))))))]
+                      `[(timer/update
+                          ~{:break? true
+                            :duration
+                            (if (== 0
+                                  (rem
+                                    (count
+                                      (filter #(:done? %)
+                                        (:tasks @app-state)))
+                                    4))
+                              TEN_MINUTES
+                              FIVE_MINUTES)
+                            :elapsed 0})]))))))]
     (reset! interval i)))
 
 (defn stop-timer [c]
   (clear-timeout)
-  (om/transact! c `[(timer/update {:elapsed ~0})]))
+  (om/transact! c `[(timer/update ~{:break? false
+                                    :duration TWENTY_FIVE_MINUTES
+                                    :elapsed 0})]))
 
 (defn button-class
   "Returns the class of a button based on its type.
@@ -114,13 +129,14 @@
   (do
     (om/transact! reconciler `[(tasks/create ~(om/props c)) :tasks])
     (om/transact! reconciler `[(tasks/update-temp ~nil) :tasks/temp])
-    (start-timer 1 0)
+    (start-timer TWENTY_FIVE_MINUTES 0)
     (doto e (.preventDefault) (.stopPropagation))))
 
 (defn change-title
   [c e]
   (when-not (.-defaultPrevented e)
-    (om/transact! c `[(tasks/update-temp ~{:title (-> e .-target .-value)})])))
+    (om/transact! c
+      `[(tasks/update-temp ~{:title (-> e .-target .-value)})])))
 
 (defn key-down
   [c e]
@@ -177,7 +193,9 @@
       (dom/div #js {:className (timer-class break?)
                     :onClick #(when-not (nil? @interval)
                                 (stop-timer this)
-                                (om/transact! this `[(tasks/abandon) :tasks]))
+                                (when-not break?
+                                  (om/transact! this
+                                    `[(tasks/abandon) :tasks])))
                     :style #js {:height "auto"
                                 :maxWidth 300
                                 :minHeight 300
