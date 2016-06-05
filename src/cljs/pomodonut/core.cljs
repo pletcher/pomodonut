@@ -152,7 +152,7 @@
   (render [this]
     (let [{:keys [title]} (om/props this)]
       (dom/div #js {:className "mx-auto"
-                    :style #js {:width 400}}
+                    :style #js {:width 340}}
         (dom/div #js {:className "full-width group"}
           (dom/input #js {:className "field full-width px0 py1"
                           :onChange #(change-title this %)
