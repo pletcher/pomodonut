@@ -14,9 +14,6 @@
 (defonce interval (atom nil))
 (defonce timeout (atom nil))
 
-(defonce chime-sound (js/Audio. "wav/chime.wav"))
-(defonce tick-sound (js/Audio. "wav/watch-tick.wav"))
-
 (defn timer-class [break?]
   (str
     "bg-"
@@ -62,7 +59,7 @@
                                 :elapsed t})])
             (if (< t duration)
               (do
-                (.play tick-sound)
+                (.play (gdom/getElement "tick-sound"))
                 (<! (wait 1000))
                 (recur (inc t)))
               (do
@@ -73,7 +70,7 @@
                                      :duration TWENTY_FIVE_MINUTES
                                      :elapsed 0})])
                   (do
-                    (.play chime-sound)
+                    (.play (gdom/getElement "chime-sound"))
                     (om/transact! reconciler
                       `[(tasks/complete) :tasks])
                     (om/transact! reconciler

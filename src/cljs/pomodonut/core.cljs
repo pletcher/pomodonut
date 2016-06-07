@@ -19,6 +19,8 @@
   (render [this]
     (let [{:keys [tasks tasks/temp timer]} (om/props this)]
       (dom/div #js {:className "full-width"}
+        (dom/audio #js {:id "chime-sound" :src "wav/chime.wav"})
+        (dom/audio #js {:id "tick-sound" :src "wav/watch-tick.wav"})
         (dom/div #js {:className "sm-flex flex-center py4"}
           (timer-component timer)
           (task-list tasks))
