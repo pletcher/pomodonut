@@ -84,6 +84,8 @@ ul {
   background-repeat: no-repeat;
   border: none;
   border-bottom: solid 1px #5198e5;
+  /* Mobile browsers add a radius by default */
+  border-radius: 0;
   display: block;
   font-size: 16px;
   transition: all 0.3s cubic-bezier(0.64, 0.09, 0.08, 1);
