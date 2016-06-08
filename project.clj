@@ -24,7 +24,9 @@
 
   :test-paths ["test/clj"]
 
-  :clean-targets ^{:protect false} [:target-path :compile-path "resources/public/js"]
+  :clean-targets ^{:protect false} [:target-path
+                                    :compile-path
+                                    "resources/public/js"]
 
   :uberjar-name "pomodonut.jar"
 
@@ -41,7 +43,8 @@
                {:source-paths ["src/cljs"]
 
                 :figwheel true
-                ;; Alternatively, you can configure a function to run every time figwheel reloads.
+                ;; Alternatively, you can configure a function to run
+                ;; every time figwheel reloads.
                 ;; :figwheel {:on-jsload "pomodonut.core/on-figwheel-reload"}
 
                 :compiler {:main pomodonut.core

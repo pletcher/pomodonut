@@ -47,7 +47,7 @@
   (do
     (om/transact! c `[(tasks/create ~(om/props c)) :tasks])
     (om/transact! c `[(tasks/update-temp ~nil) :tasks/temp])
-    (start-timer TWENTY_FIVE_MINUTES 0)
+    (start-timer TWENTY_FIVE_MINUTES)
     (.blur (.-target e))
     (doto e
       (.preventDefault)

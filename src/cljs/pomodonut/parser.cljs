@@ -1,5 +1,6 @@
 (ns pomodonut.parser
-  (:require [om.next :as om]))
+  (:require [om.next :as om]
+            [pomodonut.util :refer [format-time]]))
 
 (defmulti mutate om/dispatch)
 
@@ -49,7 +50,27 @@
   [{:keys [state]} k {:keys [title]}]
   {:action #(swap! state assoc-in [:tasks/temp :title] title)})
 
+(defmethod mutate 'timer/tick
+  [{:keys [state]} _ {:keys [duration]}]
+  {:action #(let [st @state
+                  {:keys [elapsed]} (get-in st [:timer])]
+              (set!
+                (.-title js/document)
+                (str "Pomodonut · " (format-time (- duration (inc elapsed)))))
+              (swap! state update-in [:timer]
+                (fn [t] (merge t {:duration duration
+                                  :elapsed (inc elapsed)}))))})
+
+
 (defmethod mutate 'timer/update
+  [{:keys [state]} k {:keys [duration elapsed] :as params}]
+  {:action #((set!
+               (.-title js/document)
+               (str "Pomodonut · " (format-time (- duration elapsed))))
+             (swap! state update-in [:timer]
+               (fn [t] (merge t params))))})
+
+#_(defmethod mutate 'timer/update
   [{:keys [state]} k params]
   {:action #(swap! state update-in [:timer]
               (fn [t] (merge t params)))})
