@@ -27,12 +27,17 @@
   [f]
   (count (filter #(f %) (:tasks @app-state))))
 
+(defn play-sound! [name]
+  (let [el (gdom/getElement "audio")]
+    (aset el "src" (str "wav/" name ".wav"))
+    (.play el)))
+
 (defn receive-msg
   [duration e]
   (let [evt (.-data e)]
     (condp == evt
       "tick" (do
-               (.play (gdom/getElement "tick-sound"))
+               (play-sound! "watch-tick")
                (om/transact! reconciler
                  `[(timer/tick ~{:duration duration}) :timer]))
       "stop" (if (get-in @app-state [:timer :break?])
@@ -41,7 +46,7 @@
                                    :duration TWENTY_FIVE_MINUTES
                                    :elapsed 0})])
                (do
-                 (.play (gdom/getElement "chime-sound"))
+                 (play-sound! "chime")
                  (om/transact! reconciler
                    `[(tasks/complete) :tasks])
                  (om/transact! reconciler

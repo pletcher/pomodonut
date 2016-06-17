@@ -1,5 +1,6 @@
-self.addEventListener('message', e => {
-  const [eventType, duration] = e.data
+self.addEventListener('message', function(e) {
+  var eventType = e.data[0]
+  var duration = e.data[1]
 
   switch (eventType) {
   case 'start':
@@ -17,7 +18,7 @@ function postTick() {
 }
 
 function startTick(duration, elapsed) {
-  self.interval = setInterval(() => {
+  self.interval = setInterval(function() {
     if (++elapsed < duration) {
       postTick()
     } else {
