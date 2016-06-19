@@ -10,6 +10,8 @@
   (:gen-class))
 
 (defroutes routes
+  ;; redirect from "/" to "/:list"
+  ;; get items in list and render page
   (GET "/" _
     {:status 200
      :headers {"Content-Type" "text/html; charset=utf-8"}

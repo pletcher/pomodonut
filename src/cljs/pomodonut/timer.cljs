@@ -22,15 +22,24 @@
     (if-not (nil? @worker) " pointer")))
 
 (defn count-tasks
-  "Counts the number of tasks for which f
-  is `true`"
+  "Counts the number of tasks for which f returns true"
   [f]
-  (count (filter #(f %) (:tasks @app-state))))
+  (count (filter f (:tasks @app-state))))
 
 (defn play-sound! [name]
   (let [el (gdom/getElement "audio")]
     (aset el "src" (str "wav/" name ".wav"))
     (.play el)))
+
+(defn take-break! []
+  (om/transact! reconciler
+    `[(timer/update
+        ~{:break? true
+          :duration
+          (if (== 0 (rem (count-tasks :done?) 4))
+            TEN_MINUTES
+            FIVE_MINUTES)
+          :elapsed 0})]))
 
 (defn receive-msg
   [duration e]
@@ -49,14 +58,7 @@
                  (play-sound! "chime")
                  (om/transact! reconciler
                    `[(tasks/complete) :tasks])
-                 (om/transact! reconciler
-                   `[(timer/update
-                       ~{:break? true
-                         :duration
-                         (if (== 0 (rem (count-tasks :done?) 4))
-                           TEN_MINUTES
-                           FIVE_MINUTES)
-                         :elapsed 0})]))))))
+                 (js/setTimeout take-break! 1000))))))
 
 (defn start-timer
   [duration]

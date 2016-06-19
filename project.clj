@@ -7,13 +7,18 @@
   :dependencies [[org.clojure/clojure "1.8.0"]
                  [org.clojure/clojurescript "1.8.51" :scope "provided"]
                  [org.clojure/core.async "0.2.374"]
-                 [ring "1.4.0"]
-                 [ring/ring-defaults "0.2.0"]
                  [bk/ring-gzip "0.1.1"]
-                 [ring.middleware.logger "0.5.0"]
+                 [com.cognitect/transit-clj "0.8.285"]
+                 [com.cognitect/transit-cljs "0.8.237"]
                  [compojure "1.5.0"]
                  [environ "1.0.3"]
-                 [org.omcljs/om "1.0.0-alpha35"]]
+                 [org.omcljs/om "1.0.0-alpha35"]
+                 [org.postgresql/postgresql "9.4-1201-jdbc41"]
+                 [ragtime "0.5.3"]
+                 [ring "1.4.0"]
+                 [ring/ring-defaults "0.2.0"]
+                 [ring.middleware.logger "0.5.0"]
+                 [yesql "0.5.2"]]
 
   :plugins [[lein-cljsbuild "1.1.3"]
             [lein-environ "1.0.3"]]
@@ -86,28 +91,30 @@
              ;; :open-file-command "myfile-opener"
 
              :server-logfile "log/figwheel.log"}
-
+  :aliases {"migrate" ["run" "-m" "pomodonut.migrations/migrate"]
+            "rollback" ["run" "-m" "pomodonut.migrations/rollback"]}
   :doo {:build "test"}
 
   :profiles {:dev
-             {:dependencies [[figwheel "0.5.3-2"]
-                             [figwheel-sidecar "0.5.3-2"]
-                             [com.cemerick/piggieback "0.2.1"]
-                             [org.clojure/tools.nrepl "0.2.12"]]
+             [:local-dev
+              {:dependencies [[figwheel "0.5.3-2"]
+                              [figwheel-sidecar "0.5.3-2"]
+                              [com.cemerick/piggieback "0.2.1"]
+                              [org.clojure/tools.nrepl "0.2.12"]]
 
-              :plugins [[lein-figwheel "0.5.3-2"]
-                        [lein-doo "0.1.6"]]
+               :plugins [[lein-figwheel "0.5.3-2"]
+                         [lein-doo "0.1.6"]]
 
-              :source-paths ["dev"]
+               :source-paths ["dev"]
 
-              :cljsbuild {:builds
-                          {:test
-                           {:source-paths ["src/cljs" "test/cljs"]
-                            :compiler
-                            {:output-to "resources/public/js/compiled/testable.js"
-                             :main pomodonut.test-runner
-                             :optimizations :none}}}}}
-
+               :cljsbuild {:builds
+                           {:test
+                            {:source-paths ["src/cljs" "test/cljs"]
+                             :compiler
+                             {:output-to "resources/public/js/compiled/testable.js"
+                              :main pomodonut.test-runner
+                              :optimizations :none}}}}}]
+             :test [:dev :local-test]
              :uberjar
              {:source-paths ^:replace ["src/clj"]
               :hooks [leiningen.cljsbuild]
