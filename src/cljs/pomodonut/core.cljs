@@ -9,6 +9,13 @@
 
 (enable-console-print!)
 
+(defn audio-node ^:private [s]
+  (dom/audio #js {:id s}
+    (dom/source #js {:src (str "mp3/" s ".mp3")
+                     :type "audio/mpeg"})
+    (dom/source #js {:src (str "wav/" s ".wav")
+                     :type "audio/wav"})))
+
 (defui Root
   static om/IQuery
   (query [this]
@@ -19,7 +26,8 @@
   (render [this]
     (let [{:keys [tasks tasks/temp timer]} (om/props this)]
       (dom/div #js {:className "full-width"}
-        (dom/audio #js {:id "audio"})
+        (audio-node "watch-tick")
+        (audio-node "chime")
         (dom/div #js {:className "sm-flex flex-center py4"}
           (timer-component timer)
           (task-list tasks))

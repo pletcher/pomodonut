@@ -56,24 +56,18 @@
                   {:keys [elapsed]} (get-in st [:timer])]
               (set!
                 (.-title js/document)
-                (str "Pomodonut · " (format-time (- duration (inc elapsed)))))
+                (str (format-time (- duration (inc elapsed)))))
               (swap! state update-in [:timer]
                 (fn [t] (merge t {:duration duration
                                   :elapsed (inc elapsed)}))))})
-
 
 (defmethod mutate 'timer/update
   [{:keys [state]} k {:keys [duration elapsed] :as params}]
   {:action #((set!
                (.-title js/document)
-               (str "Pomodonut · " (format-time (- duration elapsed))))
+               (str (format-time (- duration elapsed))))
              (swap! state update-in [:timer]
                (fn [t] (merge t params))))})
-
-#_(defmethod mutate 'timer/update
-  [{:keys [state]} k params]
-  {:action #(swap! state update-in [:timer]
-              (fn [t] (merge t params)))})
 
 (defmulti read om/dispatch)
 

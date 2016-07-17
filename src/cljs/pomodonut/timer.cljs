@@ -26,10 +26,10 @@
   [f]
   (count (filter f (:tasks @app-state))))
 
-(defn play-sound! [name]
-  (let [el (gdom/getElement "audio")]
-    (aset el "src" (str "wav/" name ".wav"))
-    (.play el)))
+(defn play-sound! [s]
+  (let [el (gdom/getElement s)]
+    (.play el)
+    (js/setTimeout #(aset el "currentTime" 0) 1)))
 
 (defn take-break! []
   (om/transact! reconciler

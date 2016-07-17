@@ -5,6 +5,7 @@
             [ring.middleware.defaults :refer [wrap-defaults api-defaults]]
             [ring.middleware.gzip :refer [wrap-gzip]]
             [ring.middleware.logger :refer [wrap-with-logger]]
+            [ring.middleware.reload :refer [wrap-reload]]
             [environ.core :refer [env]]
             [ring.adapter.jetty :refer [run-jetty]])
   (:gen-class))
@@ -16,7 +17,7 @@
     {:status 200
      :headers {"Content-Type" "text/html; charset=utf-8"}
      :body (io/input-stream (io/resource "public/index.html"))})
-  (resources "/"))
+  (resources "/" {:mime-types {"wav" "audio/wav"}}))
 
 (def http-handler
   (-> routes
@@ -26,4 +27,7 @@
 
 (defn -main [& [port]]
   (let [port (Integer. (or port (env :port) 10555))]
-    (run-jetty http-handler {:port port :join? false})))
+    (run-jetty (if (env :wrap-reload?)
+                 (wrap-reload http-handler)
+                 http-handler)
+               {:port port :join? false})))
